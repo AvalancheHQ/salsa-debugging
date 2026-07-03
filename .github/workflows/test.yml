@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -128,7 +129,7 @@ jobs:
 
   benchmarks-build:
     # https://github.com/CodSpeedHQ/action/issues/126
-    if: github.repository == 'salsa-rs/salsa' &&github.event_name != 'merge_group'
+    if: (github.repository == 'salsa-rs/salsa' || github.repository == 'AvalancheHQ/salsa-debugging') && github.event_name != 'merge_group'
     name: Benchmarks (build)
     runs-on: ubuntu-22.04-arm
     steps:
@@ -194,5 +195,6 @@ jobs:
         uses: CodSpeedHQ/action@9f3a37ece7abc84992501a7fcd54d1704f3458fa # v4.18.4
         with:
           mode: "simulation,memory,walltime"
+          upload-url: https://api.staging.preview.codspeed.io/upload
           run: cargo codspeed run
           token: ${{ secrets.CODSPEED_TOKEN }}
