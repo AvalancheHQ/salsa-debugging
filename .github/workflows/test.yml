@@ -203,4 +203,3 @@ jobs:
           mode: "simulation,memory,walltime"
           upload-url: https://api.staging.preview.codspeed.io/upload
           run: cargo codspeed run
-          token: ${{ secrets.CODSPEED_TOKEN }}
