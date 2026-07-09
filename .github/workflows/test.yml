@@ -194,8 +194,8 @@ jobs:
       - name: "Restore binary permissions"
         run: find target/codspeed -type f -exec chmod +x {} +
 
-      # - name: "Install valgrind-codspeed"
-      #   uses: ./.github/actions/install-valgrind
+      - name: "Install valgrind-codspeed"
+        uses: ./.github/actions/install-valgrind
 
       - name: "Run benchmarks"
         uses: CodSpeedHQ/action@9f3a37ece7abc84992501a7fcd54d1704f3458fa # v4.18.4

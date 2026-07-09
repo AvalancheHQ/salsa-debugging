@@ -7,7 +7,7 @@ inputs:
     default: "5.0.9"
   valgrind-ref:
     description: valgrind-codspeed branch/tag to build
-    default: "cod-2985-arm-flamegraph-failures"
+    default: "cod-3103-valgrind-atomics-have-incorrect-time-cause-hangs"
 
 runs:
   using: composite
