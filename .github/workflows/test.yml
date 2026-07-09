@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -14,6 +15,7 @@ concurrency:
 jobs:
   test:
     name: Test
+    if: github.repository == 'salsa-rs/salsa'
     strategy:
       matrix:
         rust:
@@ -66,6 +68,7 @@ jobs:
 
   miri_shards:
     name: Miri (${{ matrix.partition }})
+    if: github.repository == 'salsa-rs/salsa'
     strategy:
       fail-fast: false
       matrix:
@@ -102,7 +105,7 @@ jobs:
 
   miri:
     name: Miri
-    if: always()
+    if: always() && github.repository == 'salsa-rs/salsa'
     needs: miri_shards
     runs-on: ubuntu-latest
     steps:
@@ -111,6 +114,7 @@ jobs:
 
   shuttle:
     name: Shuttle
+    if: github.repository == 'salsa-rs/salsa'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -128,7 +132,7 @@ jobs:
 
   benchmarks-build:
     # https://github.com/CodSpeedHQ/action/issues/126
-    if: github.repository == 'salsa-rs/salsa' &&github.event_name != 'merge_group'
+    if: (github.repository == 'salsa-rs/salsa' || github.repository == 'AvalancheHQ/salsa-debugging') && github.event_name != 'merge_group'
     name: Benchmarks (build)
     runs-on: ubuntu-22.04-arm
     steps:
@@ -190,9 +194,12 @@ jobs:
       - name: "Restore binary permissions"
         run: find target/codspeed -type f -exec chmod +x {} +
 
+      - name: "Install valgrind-codspeed"
+        uses: ./.github/actions/install-valgrind
+
       - name: "Run benchmarks"
         uses: CodSpeedHQ/action@9f3a37ece7abc84992501a7fcd54d1704f3458fa # v4.18.4
         with:
           mode: "simulation,memory,walltime"
+          upload-url: https://api.staging.preview.codspeed.io/upload
           run: cargo codspeed run
-          token: ${{ secrets.CODSPEED_TOKEN }}
